@@ -1,0 +1,10 @@
+{
+  "/sign_in": [ "*" ],
+  "/sign_up": [ "*" ],
+
+  "/account": [
+    "Admin", "User"
+  ],
+
+  "/users_info": [ "Admin" ]
+}

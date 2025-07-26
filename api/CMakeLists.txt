@@ -13,9 +13,11 @@ pkg_check_modules(libsodium REQUIRED libsodium)
 add_executable(api
     src/main.cpp
     src/config/env_config.cpp
+    src/config/json_config.cpp
 
-    src/routes/auth_routes.cpp
+    src/routes/routes.cpp
     src/controllers/auth_controller.cpp
+    src/controllers/user_controller.cpp
 
     src/db/db_connection.cpp
     src/dto/user_dto.cpp
@@ -25,8 +27,10 @@ add_executable(api
     src/errors/error.cpp
 
     src/utils/password_encoder.cpp
+    src/utils/token_provider.cpp
 
     src/middleware/auth_middleware.cpp
+    src/middleware/access_middleware.cpp
 )
 
 target_include_directories(api PRIVATE 

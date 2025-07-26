@@ -3,11 +3,13 @@
 #include "errors/error.h"
 #include "repositories/user_repo.h"
 #include "utils/password_encoder.h"
+#include "utils/token_provider.h"
 
 #include <crow/json.h>
 #include <crow/logging.h>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace controllers::auth
 {
@@ -27,6 +29,15 @@ namespace controllers::auth
       return;
     }
 
+    util::token_provider::Claims claims = {
+        model.id, std::move(model.username), "User" // todo
+    }; 
+    dto::TokenDataResponse tokenRes = {
+      util::token_provider::generate_access(claims),
+      util::token_provider::generate_refresh(claims)
+    };
+
+    res.body = tokenRes.to_json();
     res.end();
   }
 

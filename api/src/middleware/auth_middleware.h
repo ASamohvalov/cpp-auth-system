@@ -10,12 +10,15 @@ namespace middleware
   {
     struct context
     {
-      long user_id;
-      std::string username;
+      long user_id = -1;
+      std::string username = "";
+      std::string role = "";
     };
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx);
-    void after_handle(crow::request& req, crow::response& res, context& ctx);
+    void before_handle(crow::request& req, crow::response& res, 
+        context& ctx);
+    void after_handle(crow::request& req, crow::response& res, 
+        context& ctx);
   };
 }
 

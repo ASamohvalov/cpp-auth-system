@@ -9,6 +9,7 @@ namespace repositories::user
   void save(dto::UserDto user);
   dto::UserModel get_by_username(const std::string& username);
   bool exists_by_username(const std::string& username);
+  dto::UserModel get_by_id(long id);
 }
 
 #endif

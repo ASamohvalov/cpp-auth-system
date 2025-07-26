@@ -22,6 +22,24 @@ namespace repositories::user
     });
   }
 
+  dto::UserModel get_by_id(long id)
+  {
+    db::Connection conn;
+    std::string sql = "SELECT * FROM users WHERE id = ?";
+    std::vector<std::string> res = conn.get_single(sql, {std::to_string(id)});
+    if (res.empty()) {
+      return dto::UserModel();
+    }
+    dto::UserModel model = {
+      std::stol(res[0]),
+      res[1],
+      res[2],
+      res[3],
+      res[4]
+    };
+    return model;
+  }
+
   dto::UserModel get_by_username(const std::string& username)
   {
     db::Connection conn;
