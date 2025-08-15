@@ -9,7 +9,7 @@
 
 namespace controllers::user 
 {
-  void get_user_info(crow::App<middleware::Auth, middleware::Access>& app,
+  void account_info(crow::App<middleware::Auth, middleware::Access>& app,
       const crow::request& req, crow::response& res);
 }
 

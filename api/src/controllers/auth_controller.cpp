@@ -30,14 +30,15 @@ namespace controllers::auth
     }
 
     util::token_provider::Claims claims = {
-        model.id, std::move(model.username), "User" // todo
+        model.id, std::move(model.username), model.role // todo
     }; 
     dto::TokenDataResponse tokenRes = {
       util::token_provider::generate_access(claims),
       util::token_provider::generate_refresh(claims)
     };
 
-    res.body = tokenRes.to_json();
+    res.body = tokenRes.to_json().dump();
+    res.set_header("Content-Type", "application/json");
     res.end();
   }
 
@@ -61,6 +62,7 @@ namespace controllers::auth
     repositories::user::save(user);
 
     res.code = 201;
+    res.set_header("Content-Type", "application/json");
     res.end();
   }
 }

@@ -19,8 +19,10 @@ namespace config
 
       crow::json::rvalue parsed = crow::json::load(buffer.str());
       if (!parsed) {
+        file.close();
         throw std::runtime_error("error parse json file");
       }
+      file.close();
       return parsed;
     }();
     return json;

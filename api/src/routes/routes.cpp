@@ -1,4 +1,5 @@
 #include "routes.h"
+#include "controllers/admin_controller.h"
 #include "controllers/auth_controller.h"
 #include "controllers/user_controller.h"
 #include "middleware/access_middleware.h"
@@ -29,7 +30,21 @@ namespace routes
     .methods("GET"_method)
     ([&](const crow::request& req, crow::response& res)
     {
-      controllers::user::get_user_info(app, req, res);
+      controllers::user::account_info(app, req, res);
+    });
+
+    CROW_ROUTE(app, "/users_info")
+    .methods("GET"_method)
+    ([](const crow::request& req, crow::response& res)
+    {
+      controllers::admin::users_info(req, res);
+    });
+
+    CROW_ROUTE(app, "/give_admin_role")
+    .methods("GET"_method)
+    ([](const crow::request& req, crow::response& res)
+    {
+      controllers::admin::give_admin_role(req, res);
     });
   }
 }

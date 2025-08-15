@@ -1,5 +1,4 @@
 #include "auth_middleware.h"
-#include "dto/user_dto.h"
 #include "utils/token_provider.h"
 
 #include <crow/logging.h>

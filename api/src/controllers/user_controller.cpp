@@ -8,13 +8,14 @@
 
 namespace controllers::user 
 {
-  void get_user_info(crow::App<middleware::Auth, middleware::Access>& app,
+  void account_info(crow::App<middleware::Auth, middleware::Access>& app,
       const crow::request& req, crow::response& res)
   {
     middleware::Auth::context ctx = app.get_context<middleware::Auth>(req);
     dto::UserModel model = repositories::user::get_by_id(ctx.user_id);
     dto::UserDataResponse data = {model.username, model.first_name, model.last_name};
-    res.body = data.to_json();
+    res.body = data.to_json().dump();
+    res.set_header("Content-Type", "application/json");
     res.end();
   }
 }

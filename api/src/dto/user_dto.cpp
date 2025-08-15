@@ -1,17 +1,9 @@
 #include "user_dto.h"
 
 #include <crow/json.h>
-#include <sstream>
 
 namespace dto 
 {
-  UserRole str_to_user_role(const std::string& str)
-  {
-    if (str == "Admin")
-      return UserRole::Admin;
-    return UserRole::User;
-  }
-
   UserModel UserModel::init_from_json(const std::string& json)
   {
     crow::json::rvalue json_body = crow::json::load(json);
@@ -47,19 +39,21 @@ namespace dto
     return user;
   }
 
-  std::string UserDataResponse::to_json()
+  crow::json::wvalue UserDataResponse::to_json() const
   {
-    std::ostringstream ss;
-    ss << "{ \"username\": \"" << username << "\", \"first_name\": \""
-        << first_name << "\", \"last_name\": \"" << last_name << "\" }";
-    return ss.str();
+    crow::json::wvalue obj;
+    obj["username"] = username;
+    obj["first_name"] = first_name;
+    obj["last_name"] = last_name;
+    obj["role"] = role;
+    return obj;
   }
 
-  std::string TokenDataResponse::to_json()
+  crow::json::wvalue TokenDataResponse::to_json() const
   {
-    std::ostringstream ss;
-    ss << "{ \"access_token\": \"" << access_token << "\","
-          "\"refresh_token\": \"" << refresh_token << "\" }";
-    return ss.str();
+    crow::json::wvalue obj;
+    obj["access_token"] = access_token;
+    obj["refresh_token"] = refresh_token;
+    return obj;
   }
 }

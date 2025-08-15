@@ -13,8 +13,9 @@ namespace db
   Connection::Connection()
   {
     if (db == nullptr) {
-      CROW_LOG_DEBUG << config::get_env("DB_FILE_PATH");
       sqlite3_open(config::get_env("DB_FILE_PATH").c_str(), &db);
+      CROW_LOG_DEBUG << "make db connection with file - " + 
+          config::get_env("DB_FILE_PATH");
     }
   }
 
@@ -116,7 +117,8 @@ namespace db
     
     int index = 1;
     for (const std::string& param : params) {
-      sqlite3_bind_text(stmt, index++, param.c_str(), param.length(), SQLITE_TRANSIENT);
+      sqlite3_bind_text(
+          stmt, index++, param.c_str(), param.length(), SQLITE_TRANSIENT);
     }
 
     if (sqlite3_step(stmt) != SQLITE_DONE) {
@@ -125,5 +127,14 @@ namespace db
     }
 
     sqlite3_finalize(stmt);
+  }
+
+  void Connection::multi_execute(const std::string& sql) const
+  {
+    char* errmsg;
+    if (sqlite3_exec(db, sql.c_str(), 0, 0, &errmsg)) {
+      throw exception::SqlException("error prepare sql, message - " + 
+          std::string(errmsg));
+    }
   }
 }

@@ -1,13 +1,16 @@
 #ifndef USER_DTO_H
 #define USER_DTO_H
 
+#include <crow/json.h>
+#include <jwt-cpp/jwt.h>
 #include <string>
+#include <vector>
+
+#include "role_dto.h"
 
 namespace dto 
 {
-  enum class UserRole { Admin, User };
-  UserRole str_to_user_role(const std::string& str);
-
+  // models are objects that correspond exactly to tables in the database
   struct UserModel
   {
     long id = -1;
@@ -16,6 +19,8 @@ namespace dto
     std::string password = "";
     std::string first_name = "";
     std::string last_name = "";
+  
+    std::string role = "User";
   
     static UserModel init_from_json(const std::string& json);
   };
@@ -35,6 +40,8 @@ namespace dto
     std::string first_name = "";
     std::string last_name = "";
 
+    RoleDto role { Role::User };
+
     static UserDto init_from_json(const std::string& json);
   };
 
@@ -44,7 +51,9 @@ namespace dto
     std::string first_name;
     std::string last_name;
   
-    std::string to_json();
+    std::string role;
+  
+    crow::json::wvalue to_json() const;
   };
 
   struct TokenDataResponse
@@ -52,8 +61,18 @@ namespace dto
     std::string access_token;
     std::string refresh_token;
 
-    std::string to_json();
+    crow::json::wvalue to_json() const;
   };
+
+  template<typename T>
+  crow::json::wvalue vectorToJson(const std::vector<T>& dtos)
+  {
+    crow::json::wvalue::list array;
+    for (const auto& dto : dtos) {
+      array.push_back(dto.to_json());
+    }
+    return array;
+  }
 }
 
 #endif

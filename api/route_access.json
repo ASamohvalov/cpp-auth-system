@@ -6,5 +6,6 @@
     "Admin", "User"
   ],
 
-  "/users_info": [ "Admin" ]
+  "/users_info": [ "Admin" ],
+  "/give_admin_role": [ "Admin" ]
 }

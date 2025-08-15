@@ -5,20 +5,22 @@
 #include <crow/logging.h>
 #include <sqlite3.h>
 #include <string>
+#include <utility>
 
 namespace repositories::user
 {
-  void save(dto::UserDto user)
+  void save(const dto::UserDto& user)
   {
     db::Connection conn;
     std::string sql = 
-        "INSERT INTO users (username, password, first_name, last_name) "
-        "VALUES (?, ?, ?, ?)";
+        "INSERT INTO users (username, password, first_name, last_name, role_id) "
+        "VALUES (?, ?, ?, ?, ?)";
     conn.execute(sql, {
       user.username,
       user.password,
       user.first_name,
-      user.last_name
+      user.last_name,
+      std::to_string(user.role.id)
     });
   }
 
@@ -53,7 +55,8 @@ namespace repositories::user
       res[1],
       res[2],
       res[3],
-      res[4]
+      res[4],
+      res[5]
     };
     return model;
   }
@@ -63,5 +66,22 @@ namespace repositories::user
     db::Connection conn;
     std::string sql = "SELECT COUNT(*) FROM users WHERE username = ?";
     return conn.get_count(sql, {username});
+  }
+
+  std::vector<dto::UserDataResponse> get_all()
+  {
+    db::Connection conn;
+    std::string sql = "SELECT * FROM users";
+    std::vector<std::vector<std::string>> res = conn.get(sql);
+    std::vector<dto::UserDataResponse> response;
+    for (size_t i = 1; i < res.size(); ++i) {
+      response.push_back(dto::UserDataResponse {
+        std::move(res[i][1]),
+        std::move(res[i][3]),
+        std::move(res[i][4]),
+        std::move(res[i][5]),
+      });
+    }
+    return response;
   }
 }

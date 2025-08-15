@@ -18,16 +18,22 @@ add_executable(api
     src/routes/routes.cpp
     src/controllers/auth_controller.cpp
     src/controllers/user_controller.cpp
+    src/controllers/admin_controller.cpp
 
+    src/db/migrations.cpp
     src/db/db_connection.cpp
     src/dto/user_dto.cpp
+    src/dto/role_dto.cpp
     src/repositories/user_repo.cpp
+    src/repositories/role_repo.cpp
     
     src/exceptions/sql_exception.cpp
     src/errors/error.cpp
 
     src/utils/password_encoder.cpp
     src/utils/token_provider.cpp
+    src/utils/admin_initializer.cpp
+    src/utils/role_initializer.cpp
 
     src/middleware/auth_middleware.cpp
     src/middleware/access_middleware.cpp
