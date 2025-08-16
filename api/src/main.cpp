@@ -5,7 +5,9 @@
 #include "utils/admin_initializer.h"
 #include "db/migrations.h"
 #include "utils/role_initializer.h"
+
 #include <crow/app.h>
+#include <crow/logging.h>
 
 int main() 
 {

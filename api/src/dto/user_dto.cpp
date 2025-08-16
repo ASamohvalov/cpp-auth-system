@@ -52,8 +52,8 @@ namespace dto
   crow::json::wvalue TokenDataResponse::to_json() const
   {
     crow::json::wvalue obj;
-    obj["access_token"] = access_token;
     obj["refresh_token"] = refresh_token;
+    obj["access_token"] = access_token;
     return obj;
   }
 }

@@ -14,8 +14,7 @@ namespace db
   {
     if (db == nullptr) {
       sqlite3_open(config::get_env("DB_FILE_PATH").c_str(), &db);
-      CROW_LOG_DEBUG << "make db connection with file - " + 
-          config::get_env("DB_FILE_PATH");
+      CROW_LOG_DEBUG << "initialized connection to db";
     }
   }
 

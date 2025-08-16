@@ -24,13 +24,14 @@ namespace controllers::auth
     }
 
     dto::UserModel model = repositories::user::get_by_username(user.username);
+    CROW_LOG_DEBUG << model.username;
     if (!util::password_hash::verify(model.password, user.password)) {
       error::bad_request(res, "wrong username or password");
       return;
     }
 
     util::token_provider::Claims claims = {
-        model.id, std::move(model.username), model.role // todo
+        model.id, std::move(model.username), model.role.role // todo
     }; 
     dto::TokenDataResponse tokenRes = {
       util::token_provider::generate_access(claims),

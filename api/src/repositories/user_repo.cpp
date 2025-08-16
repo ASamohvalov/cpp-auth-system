@@ -1,5 +1,6 @@
 #include "user_repo.h"
 #include "db/db_connection.h"
+#include "dto/role_dto.h"
 #include "dto/user_dto.h"
 
 #include <crow/logging.h>
@@ -45,7 +46,9 @@ namespace repositories::user
   dto::UserModel get_by_username(const std::string& username)
   {
     db::Connection conn;
-    std::string sql = "SELECT * FROM users WHERE username = ?";
+    std::string sql = "SELECT * FROM users "
+                      "JOIN roles ON users.role_id = roles.id "
+                      "WHERE username = ?";
     std::vector<std::string> res = conn.get_single(sql, {username});
     if (res.empty()) {
       return dto::UserModel();
@@ -56,7 +59,7 @@ namespace repositories::user
       res[2],
       res[3],
       res[4],
-      res[5]
+      dto::RoleModel { std::stol(res[5]), res[6] }
     };
     return model;
   }

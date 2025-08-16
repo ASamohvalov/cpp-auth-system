@@ -20,8 +20,8 @@ namespace dto
     std::string first_name = "";
     std::string last_name = "";
   
-    std::string role = "User";
-  
+    RoleModel role { -1, "User" };
+    
     static UserModel init_from_json(const std::string& json);
   };
 

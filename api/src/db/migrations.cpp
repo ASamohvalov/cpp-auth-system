@@ -32,8 +32,8 @@ namespace util::migrations
     );
     if (count != number_of_tables) {
       std::string sql = get_migration_sql();
-      CROW_LOG_DEBUG << sql;
       connection.multi_execute(sql);
+      CROW_LOG_DEBUG << "migrations done";
     }
   }
 }
