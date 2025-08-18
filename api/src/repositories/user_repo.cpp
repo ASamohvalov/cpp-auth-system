@@ -6,10 +6,28 @@
 #include <crow/logging.h>
 #include <sqlite3.h>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 namespace repositories::user
 {
+  namespace 
+  {
+    dto::UserModel map_to_model(
+        const std::unordered_map<std::string, std::string>& map)
+    {
+      dto::UserModel model = {
+        std::stol(map.at("id")),
+        map.at("username"),
+        map.at("password"),
+        map.at("first_name"),
+        map.at("last_name"),
+        dto::RoleModel { std::stol(map.at("role_id")), map.at("role") }
+      };
+      return model;     
+    }
+  }
+
   void save(const dto::UserDto& user)
   {
     db::Connection conn;
@@ -28,19 +46,15 @@ namespace repositories::user
   dto::UserModel get_by_id(long id)
   {
     db::Connection conn;
-    std::string sql = "SELECT * FROM users WHERE id = ?";
-    std::vector<std::string> res = conn.get_single(sql, {std::to_string(id)});
+    std::string sql = "SELECT * FROM users "
+                      "JOIN roles ON roles.id = role_id "
+                      "WHERE users.id = ?";
+    std::unordered_map<std::string, std::string> res = 
+        conn.get_single_map(sql, { std::to_string(id) });
     if (res.empty()) {
       return dto::UserModel();
     }
-    dto::UserModel model = {
-      std::stol(res[0]),
-      res[1],
-      res[2],
-      res[3],
-      res[4]
-    };
-    return model;
+    return map_to_model(res);
   }
 
   dto::UserModel get_by_username(const std::string& username)
@@ -49,26 +63,19 @@ namespace repositories::user
     std::string sql = "SELECT * FROM users "
                       "JOIN roles ON users.role_id = roles.id "
                       "WHERE username = ?";
-    std::vector<std::string> res = conn.get_single(sql, {username});
+    std::unordered_map<std::string, std::string> res = 
+        conn.get_single_map(sql, { username });
     if (res.empty()) {
       return dto::UserModel();
     }
-    dto::UserModel model = {
-      std::stol(res[0]),
-      res[1],
-      res[2],
-      res[3],
-      res[4],
-      dto::RoleModel { std::stol(res[5]), res[6] }
-    };
-    return model;
+    return map_to_model(res);
   }
 
   bool exists_by_username(const std::string& username)
   {
     db::Connection conn;
     std::string sql = "SELECT COUNT(*) FROM users WHERE username = ?";
-    return conn.get_count(sql, {username});
+    return conn.get_count(sql, { username });
   }
 
   std::vector<dto::UserDataResponse> get_all()

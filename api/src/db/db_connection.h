@@ -5,6 +5,7 @@
 #include <sqlite3.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace db 
@@ -14,12 +15,21 @@ namespace db
   public:
     Connection();
     
+    // sql example = "SELECT column FROM entity"
+    std::string get_one(const std::string& sql, 
+        std::initializer_list<const std::string> params = {}) const;
+
     // sql example = "SELECT COUNT(*) FROM entity"
     int get_count(const std::string& sql, 
         std::initializer_list<const std::string> params = {}) const;
 
     // sql example = "SELECT * FROM entity WHERE id = 1"
     std::vector<std::string> get_single(const std::string& sql,
+        std::initializer_list<const std::string> params = {}) const;
+
+    // duplicate column names are ignored
+    std::unordered_map<std::string, std::string> get_single_map(
+        const std::string& sql,
         std::initializer_list<const std::string> params = {}) const;
 
     // sql example = "SELECT * FROM entity"

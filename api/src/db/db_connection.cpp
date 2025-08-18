@@ -4,6 +4,7 @@
 
 #include <crow/logging.h>
 #include <sqlite3.h>
+#include <unordered_map>
 #include <vector>
 
 namespace db
@@ -16,6 +17,29 @@ namespace db
       sqlite3_open(config::get_env("DB_FILE_PATH").c_str(), &db);
       CROW_LOG_DEBUG << "initialized connection to db";
     }
+  }
+
+  std::string Connection::get_one(const std::string& sql, 
+      std::initializer_list<const std::string> params) const
+  {
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr)) {
+      throw exception::SqlException("error prepare sql");
+    }
+    
+    int index = 1;
+    for (const std::string& param : params) {
+      sqlite3_bind_text(
+          stmt, index++, param.c_str(), param.length(), SQLITE_TRANSIENT);
+    }
+
+    std::string res = "";
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+      res = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+    }
+
+    sqlite3_finalize(stmt);
+    return res;
   }
 
   int Connection::get_count(const std::string& sql, 
@@ -68,7 +92,37 @@ namespace db
     sqlite3_finalize(stmt);
     return res;
   }
-  
+
+  std::unordered_map<std::string, std::string> Connection::get_single_map(
+      const std::string& sql,
+      std::initializer_list<const std::string> params) const
+  {
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr)) {
+      throw exception::SqlException("error prepare sql");
+    }
+    
+    int index = 1;
+    for (const std::string& param : params) {
+      sqlite3_bind_text(
+          stmt, index++, param.c_str(), param.length(), SQLITE_TRANSIENT);
+    }
+
+    std::unordered_map<std::string, std::string> res;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+      int column_count = sqlite3_column_count(stmt);
+      for (int i = 0; i < column_count; ++i) {
+        const unsigned char* text = sqlite3_column_text(stmt, i);
+        const char* col_name = sqlite3_column_name(stmt, i);
+        // if text is NULL => "NULL"
+        res.insert( { col_name, text ? reinterpret_cast<const char*>(text) : "NULL" } );
+      }
+    }
+
+    sqlite3_finalize(stmt);
+    return res;
+  }
+
   std::vector<std::vector<std::string>> Connection::get(const std::string& sql,
       std::initializer_list<const std::string> params) const
   {

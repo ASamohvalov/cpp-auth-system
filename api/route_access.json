@@ -1,6 +1,7 @@
 {
   "/sign_in": [ "*" ],
   "/sign_up": [ "*" ],
+  "/swagger": [ "*" ],
 
   "/account": [
     "Admin", "User"

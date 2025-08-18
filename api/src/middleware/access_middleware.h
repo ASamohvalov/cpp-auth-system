@@ -28,6 +28,7 @@ namespace middleware
       res.code = 403;
       res.end();
     }
+
     void after_handle(crow::request &req, crow::response &res, context &ctx);
   };
 }
