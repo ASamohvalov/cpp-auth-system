@@ -160,6 +160,40 @@ namespace db
     return res;
   }
 
+  std::vector<std::unordered_map<std::string, std::string>> Connection::get_vector_map(
+      const std::string& sql,
+      std::initializer_list<const std::string> params) const
+  {
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr)) {
+      throw exception::SqlException("error prepare sql");
+    }
+    
+    int index = 1;
+    for (const std::string& param : params) {
+      sqlite3_bind_text(
+          stmt, index++, param.c_str(), param.length(), SQLITE_TRANSIENT);
+    }
+
+    std::vector<std::unordered_map<std::string, std::string>> res;
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      int column_count = sqlite3_column_count(stmt);
+      std::unordered_map<std::string, std::string> column;
+      for (int i = 0; i < column_count; ++i) {
+        const unsigned char* text = sqlite3_column_text(stmt, i);
+        const char* col_name = sqlite3_column_name(stmt, i);
+        // if text is NULL => "NULL"
+        column.insert( { col_name, text ? reinterpret_cast<const char*>(text) : "NULL" } );
+      }
+      res.push_back(column);
+    }
+
+    sqlite3_finalize(stmt);
+    return res;
+  }
+
+
+
   void Connection::execute(const std::string& sql,
       std::initializer_list<const std::string> params) const
   {

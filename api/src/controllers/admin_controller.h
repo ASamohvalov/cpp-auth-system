@@ -7,7 +7,7 @@
 namespace controllers::admin
 {
   void users_info(const crow::request& req, crow::response& res);
-  void give_admin_role(const crow::request& req, crow::response& res);
+  void give_admin_role(const crow::request& req, crow::response& res, long user_id);
 }
 
 #endif

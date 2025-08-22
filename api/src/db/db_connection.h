@@ -39,6 +39,10 @@ namespace db
     // { 'value_1',       'value_2',       'value_3'      }}
     std::vector<std::vector<std::string>> get(const std::string& sql,
         std::initializer_list<const std::string> params = {}) const;
+    
+    std::vector<std::unordered_map<std::string, std::string>> get_vector_map(
+        const std::string& sql,
+        std::initializer_list<const std::string> params = {}) const;
 
     // sql example = "INSERT INTO entity VALUES (?, ?, ?)"
     // all queries that do not return a value

@@ -8,6 +8,7 @@ namespace repositories::user
 {
   // all functions throws SqlException
   void save(const dto::UserDto& user);
+  void update(const dto::UserModel& user);
   dto::UserModel get_by_username(const std::string& username);
   bool exists_by_username(const std::string& username);
   dto::UserModel get_by_id(long id);

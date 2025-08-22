@@ -8,6 +8,7 @@
 #include <crow/app.h>
 #include <crow/http_request.h>
 #include <crow/http_response.h>
+#include <crow/logging.h>
 
 namespace routes
 {
@@ -41,20 +42,12 @@ namespace routes
       controllers::admin::users_info(req, res);
     });
 
-#if 0
-    CROW_ROUTE(app, "/give_admin_role")
+    CROW_ROUTE(app, "/give_admin_role/<int>")
     .methods("GET"_method)
-    ([](const crow::request& req, crow::response& res)
+    ([](const crow::request& req, crow::response& res, long user_id)
     {
-      controllers::admin::give_admin_role(req, res);
+      controllers::admin::give_admin_role(req, res, user_id);
     });
 
-    CROW_ROUTE(app, "/swagger.json")
-    .methods("GET"_method)
-    ([]()
-    {
-      return controllers::swagger::load_file();
-    });
-#endif
   }
 }

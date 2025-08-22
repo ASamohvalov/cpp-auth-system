@@ -42,6 +42,7 @@ namespace dto
   crow::json::wvalue UserDataResponse::to_json() const
   {
     crow::json::wvalue obj;
+    obj["id"] = id;
     obj["username"] = username;
     obj["first_name"] = first_name;
     obj["last_name"] = last_name;

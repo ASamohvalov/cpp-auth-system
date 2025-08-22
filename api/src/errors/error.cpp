@@ -10,7 +10,8 @@ namespace error
   void bad_request(crow::response& res, const std::string& msg)
   {
     res.code = 400;
-    res.body = "\"message\": \"" + msg + "\"";
+    res.body = "{ \"message\": \"" + msg + "\" }";
+    res.add_header("Content-Type", "application/json");
     res.end();
   }
 }

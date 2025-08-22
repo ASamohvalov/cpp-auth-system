@@ -47,6 +47,8 @@ namespace dto
 
   struct UserDataResponse
   {
+    long id;
+
     std::string username;
     std::string first_name;
     std::string last_name;
@@ -65,7 +67,7 @@ namespace dto
   };
 
   template<typename T>
-  crow::json::wvalue vectorToJson(const std::vector<T>& dtos)
+  crow::json::wvalue vector_to_json(const std::vector<T>& dtos)
   {
     crow::json::wvalue::list array;
     for (const auto& dto : dtos) {

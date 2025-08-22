@@ -8,5 +8,5 @@
   ],
 
   "/users_info": [ "Admin" ],
-  "/give_admin_role": [ "Admin" ]
+  "/give_admin_role/*": [ "Admin" ]
 }

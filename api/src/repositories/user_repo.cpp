@@ -43,6 +43,23 @@ namespace repositories::user
     });
   }
 
+  void update(const dto::UserModel& user)
+  {
+    CROW_LOG_DEBUG << user.role.id;
+    db::Connection conn;
+    std::string sql = 
+        "UPDATE users "
+        "SET password = ?, first_name = ?, last_name = ?, role_id = ? "
+        "WHERE id = ?";
+    conn.execute(sql, {
+      user.password,
+      user.first_name,
+      user.last_name,
+      std::to_string(user.role.id),
+      std::to_string(user.id)
+    });
+  }
+
   dto::UserModel get_by_id(long id)
   {
     db::Connection conn;
@@ -81,15 +98,17 @@ namespace repositories::user
   std::vector<dto::UserDataResponse> get_all()
   {
     db::Connection conn;
-    std::string sql = "SELECT * FROM users";
-    std::vector<std::vector<std::string>> res = conn.get(sql);
+    std::string sql = "SELECT * FROM users "
+                      "JOIN roles ON role_id = roles.id";
+    auto res = conn.get_vector_map(sql);
     std::vector<dto::UserDataResponse> response;
-    for (size_t i = 1; i < res.size(); ++i) {
+    for (size_t i = 0; i < res.size(); ++i) {
       response.push_back(dto::UserDataResponse {
-        std::move(res[i][1]),
-        std::move(res[i][3]),
-        std::move(res[i][4]),
-        std::move(res[i][5]),
+        std::stol(res[i]["id"]),
+        std::move(res[i]["username"]),
+        std::move(res[i]["first_name"]),
+        std::move(res[i]["last_name"]),
+        std::move(res[i]["role"])
       });
     }
     return response;

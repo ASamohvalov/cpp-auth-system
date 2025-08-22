@@ -19,7 +19,6 @@ add_executable(api
     src/controllers/auth_controller.cpp
     src/controllers/user_controller.cpp
     src/controllers/admin_controller.cpp
-    src/controllers/swagger_controller.cpp
 
     src/db/migrations.cpp
     src/db/db_connection.cpp

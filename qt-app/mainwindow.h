@@ -22,6 +22,8 @@ public:
 private slots:
     void on_stackedWidget_currentChanged(int arg1);
 
+    void on_signInBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 
