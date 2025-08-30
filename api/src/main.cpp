@@ -1,9 +1,8 @@
 #include "config/env_config.h"
-#include "middleware/access_middleware.h"
-#include "middleware/auth_middleware.h"
 #include "routes/routes.h"
 #include "utils/admin_initializer.h"
 #include "db/migrations.h"
+#include "utils/app.h"
 #include "utils/role_initializer.h"
 
 #include <crow/app.h>
@@ -11,7 +10,7 @@
 
 int main() 
 {
-  crow::App<middleware::Auth, middleware::Access> app; 
+  Application app; 
 
   crow::logger::setLogLevel(crow::LogLevel::Debug);
 

@@ -1,4 +1,5 @@
 #include "sql_exception.h"
+
 #include <stdexcept>
 
 namespace exception 

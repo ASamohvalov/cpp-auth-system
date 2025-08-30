@@ -1,6 +1,5 @@
 #include "user_controller.h"
 #include "dto/user_dto.h"
-#include "middleware/access_middleware.h"
 #include "middleware/auth_middleware.h"
 #include "repositories/user_repo.h"
 
@@ -8,7 +7,7 @@
 
 namespace controllers::user 
 {
-  void account_info(crow::App<middleware::Auth, middleware::Access>& app,
+  void account_info(Application& app,
       const crow::request& req, crow::response& res)
   {
     middleware::Auth::context ctx = app.get_context<middleware::Auth>(req);

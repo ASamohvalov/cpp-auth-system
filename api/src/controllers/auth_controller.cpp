@@ -2,14 +2,18 @@
 #include "dto/user_dto.h"
 #include "errors/error.h"
 #include "repositories/user_repo.h"
+#include "utils/app.h"
 #include "utils/password_encoder.h"
 #include "utils/token_provider.h"
+#include "dto/token_dto.h"
+#include "repositories/token_repo.h"
 
 #include <crow/json.h>
 #include <crow/logging.h>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <optional>
 
 namespace controllers::auth
 {
@@ -30,12 +34,15 @@ namespace controllers::auth
     }
 
     util::token_provider::Claims claims = {
-        model.id, std::move(model.username), model.role.role
+        model.id, std::move(model.username), std::move(model.role.role)
     }; 
     dto::TokenDataResponse tokenRes = {
       util::token_provider::generate_access(claims),
       util::token_provider::generate_refresh(claims)
     };
+
+		dto::TokenDto token = { tokenRes.refresh_token, model.id };
+		repositories::token::save(token);
 
     res.body = tokenRes.to_json().dump();
     res.set_header("Content-Type", "application/json");
@@ -62,6 +69,42 @@ namespace controllers::auth
     repositories::user::save(user);
 
     res.code = 201;
+    res.set_header("Content-Type", "application/json");
+    res.end();
+  }
+
+  void update_tokens(Application& app, const crow::request& req, crow::response& res)
+  { 
+    std::string refresh_token;
+    try {
+      refresh_token = dto::get_by_json("refresh_token", req.body);
+    } catch(const std::runtime_error&) {
+      error::bad_request(res, "error get refresh token from request");
+      return;
+    }
+    if (!util::token_provider::validate_refresh(refresh_token)) {
+      error::bad_request(res, "invalid refresh token");
+      return;
+    }
+		std::optional<dto::TokenModel> token_model_opt = 
+				repositories::token::get_by_token(refresh_token);
+		if (token_model_opt == std::nullopt) {
+      error::bad_request(res, "token not found");
+			return;
+		}
+
+		dto::UserModel model = repositories::user::get_by_id(token_model_opt->user_id);
+		util::token_provider::Claims claims = { model.id, model.username, model.role.role };
+
+    dto::TokenDataResponse token_res = {
+      util::token_provider::generate_access(claims),
+      util::token_provider::generate_refresh(claims)
+    };
+
+		token_model_opt->token = token_res.refresh_token;
+		repositories::token::update_token(token_model_opt.value());
+
+    res.body = token_res.to_json().dump();
     res.set_header("Content-Type", "application/json");
     res.end();
   }

@@ -1,7 +1,7 @@
 {
   "/sign_in": [ "*" ],
   "/sign_up": [ "*" ],
-  "/swagger": [ "*" ],
+  "/update_tokens": [ "*" ],
 
   "/account": [
     "Admin", "User"

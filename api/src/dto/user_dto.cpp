@@ -57,4 +57,10 @@ namespace dto
     obj["access_token"] = access_token;
     return obj;
   }
+
+  std::string get_by_json(const std::string& key, const std::string& json)
+  {
+    crow::json::rvalue json_body = crow::json::load(json);
+    return json_body[key].s();
+  }
 }

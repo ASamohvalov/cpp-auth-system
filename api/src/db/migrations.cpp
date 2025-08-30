@@ -1,5 +1,6 @@
 #include "migrations.h"
 #include "db_connection.h"
+
 #include <crow/logging.h>
 #include <fstream>
 #include <stdexcept>

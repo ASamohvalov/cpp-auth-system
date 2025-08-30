@@ -75,6 +75,8 @@ namespace dto
     }
     return array;
   }
+
+  std::string get_by_json(const std::string& key, const std::string& json);
 }
 
 #endif

@@ -2,8 +2,7 @@
 #include "controllers/admin_controller.h"
 #include "controllers/auth_controller.h"
 #include "controllers/user_controller.h"
-#include "middleware/access_middleware.h"
-#include "middleware/auth_middleware.h"
+#include "utils/app.h"
 
 #include <crow/app.h>
 #include <crow/http_request.h>
@@ -12,7 +11,7 @@
 
 namespace routes
 {
-  void init(crow::App<middleware::Auth, middleware::Access>& app)
+  void init(Application& app)
   {
     CROW_ROUTE(app, "/sign_in")
     .methods("POST"_method)
@@ -26,6 +25,13 @@ namespace routes
     ([](const crow::request& req, crow::response& res)
     {
       controllers::auth::sign_up(req, res);
+    });
+
+    CROW_ROUTE(app, "/update_tokens")
+    .methods("POST"_method)
+    ([&](const crow::request& req, crow::response& res)
+    {
+      controllers::auth::update_tokens(app, req, res);
     });
   
     CROW_ROUTE(app, "/account")
@@ -43,11 +49,11 @@ namespace routes
     });
 
     CROW_ROUTE(app, "/give_admin_role/<int>")
-    .methods("GET"_method)
+    .methods("POST"_method)
     ([](const crow::request& req, crow::response& res, long user_id)
     {
       controllers::admin::give_admin_role(req, res, user_id);
     });
-
   }
 }
+

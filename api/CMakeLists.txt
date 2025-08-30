@@ -24,8 +24,10 @@ add_executable(api
     src/db/db_connection.cpp
     src/dto/user_dto.cpp
     src/dto/role_dto.cpp
+		src/dto/token_dto.cpp
     src/repositories/user_repo.cpp
     src/repositories/role_repo.cpp
+		src/repositories/token_repo.cpp
     
     src/exceptions/sql_exception.cpp
     src/errors/error.cpp
