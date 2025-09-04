@@ -1,13 +1,14 @@
 #include "sign_in_window.h"
 #include "components/error_frame.h"
-#include "views/base_widget.h"
 #include "views/base_window.h"
+#include "utils/router.h"
+#include "components/clickable_label.h"
 
 #include <QFrame>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QTextEdit>
 #include <QLabel>
-#include <QStackedLayout>
 #include <QTimer>
 #include <QDebug>
 
@@ -21,16 +22,19 @@ namespace views
       , errorFrame(new components::ErrorFrame(300, this))
   {
     // components
-    qInfo() << "call constructor";
-    emit setHeaderTitle("SIGN IN");
-
     QVBoxLayout* contentLayout = new QVBoxLayout(this);
 
     submitBtn->setText("submit");
 
-    QLabel* bottomText = new QLabel("If you don't have an account - register", 
-        this);
-    bottomText->setMargin(20);
+		QFrame* bottomTextFrame = new QFrame(this);
+		
+		QHBoxLayout* bottomTextLayout = new QHBoxLayout(bottomTextFrame);
+    QLabel* bottomText = new QLabel("If you don't have an account - ", this);
+		components::ClickableLabel* bottomLabel = new components::ClickableLabel(this);
+
+		bottomLabel->setText("sign up");
+		bottomTextLayout->addWidget(bottomText);
+		bottomTextLayout->addWidget(bottomLabel);
     
     errorFrame->setVisible(false);
     
@@ -42,12 +46,21 @@ namespace views
     contentLayout->addWidget(passwordEdit, 0, Qt::AlignCenter);
     contentLayout->addWidget(submitBtn, 0, Qt::AlignCenter);
 
-    contentLayout->addWidget(bottomText, 0, Qt::AlignCenter);
+    contentLayout->addWidget(bottomTextFrame, 0, Qt::AlignCenter);
     contentLayout->addStretch();
 
     // signals and slots
     connect(submitBtn, &QPushButton::clicked, this, &SignInWindow::onSubmitBtnClick);
+		connect(bottomLabel, &components::ClickableLabel::clicked, this, [this]() {
+			emit changeRoute(utils::Route::SignUp);
+		});
   }
+
+	void SignInWindow::after() 
+	{
+    emit setHeaderTitle("SIGN IN");
+		emit setHeaderStyleSheet("background-color: #288F32");
+	}
 
   void SignInWindow::onSubmitBtnClick()
   {
@@ -58,6 +71,7 @@ namespace views
     }
 
     // send to server function
+		emit changeRoute(utils::Route::Account);
   }
 
   void SignInWindow::errorFrameShowTimeout()

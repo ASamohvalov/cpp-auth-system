@@ -4,4 +4,6 @@ namespace views
 {
   BaseWindow::BaseWindow(QWidget* parent) : QWidget(parent)
   {}
+
+	BaseWindow::~BaseWindow() {}
 }

@@ -14,9 +14,11 @@ namespace views
 {
   class SignInWindow : public BaseWindow 
   {
-    Q_OBJECT    
+    Q_OBJECT
   public:
     SignInWindow(QWidget* parent = nullptr);
+
+		void after() override;
   
   private slots:
     void onSubmitBtnClick();

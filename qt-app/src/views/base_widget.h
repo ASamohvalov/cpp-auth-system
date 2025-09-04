@@ -1,11 +1,13 @@
 #pragma once
 
-#include "views/base_window.h"
+#include "utils/router.h"
 
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QFrame>
 #include <QLabel>
+#include <QStackedWidget>
+#include <QVector>
 
 namespace views
 {
@@ -14,21 +16,20 @@ namespace views
     Q_OBJECT
   public:
     BaseWidget(QWidget* parent = nullptr);
-    BaseWidget(BaseWindow* content, QWidget* parent = nullptr);
-
-    void setContent(BaseWindow* content);
 
   private slots:
     void onSetHeaderTitle(const QString& text);
+		void onSetHederStyleSheet(const QString& styleSheet);
+		void onChangeRoute(utils::Route route);
 
   private:
-    void init();
+		void changeContent(utils::Route route);
 
     QVBoxLayout* mainLayout;
     QFrame* header;
     QLabel* headerTitle;
     QLabel* logoutLink;
 
-    BaseWindow* content;
+    QStackedWidget* content;
   };
 }

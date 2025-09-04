@@ -1,13 +1,13 @@
 #pragma once
 
-#include "views/base_widget.h"
+#include <QVector>
 
 namespace utils
 {
-  enum class Route
+  enum Route
   {
-    SignIn, SignUp, Account
+    SignIn = 0, 
+		SignUp = 1, 
+		Account = 2
   };
-
-  void showWindow(const views::BaseWidget& baseWidget, Route route);
 }

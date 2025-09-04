@@ -1,6 +1,8 @@
 #include "base_widget.h"
 #include "qboxlayout.h"
 #include "views/base_window.h"
+#include "utils/router.h"
+#include "utils/window.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -9,44 +11,18 @@
 
 namespace views
 {
-  BaseWidget::BaseWidget(QWidget* parent) : QWidget(parent)
+	BaseWidget::BaseWidget(QWidget* parent) : QWidget(parent)
       , mainLayout(new QVBoxLayout(this))
       , header(new QFrame(this))
       , headerTitle(new QLabel(header))
       , logoutLink(new QLabel(header))
-      , content(new BaseWindow(this))
-  {
-    // init();
-
-    // QLabel* noContentLabel = new QLabel("no content here", content);
-    // QVBoxLayout* contentLayout = new QVBoxLayout(content);
-    // contentLayout->addWidget(noContentLabel);
-  }
-
-  BaseWidget::BaseWidget(BaseWindow* content, QWidget* parent) : QWidget(parent)
-      , mainLayout(new QVBoxLayout(this))
-      , header(new QFrame(this))
-      , headerTitle(new QLabel(header))
-      , logoutLink(new QLabel(header))
-      , content(content)
-  {
-    init();  
-  }
-
-  void BaseWidget::onSetHeaderTitle(const QString& text)
-  {
-    qInfo() << "slot";
-    headerTitle->setText(text);
-  }
-
-  void BaseWidget::init()
+			, content(new QStackedWidget(this))
   {
     setFixedSize(800, 600);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
     header->setFixedHeight(80);
-    header->setStyleSheet("background-color: #288F32");
 
     QHBoxLayout* headerLayout = new QHBoxLayout(header);
 
@@ -57,16 +33,42 @@ namespace views
     headerLayout->addStretch();
     headerLayout->addWidget(logoutLink);
 
+    // init routes
+		QVector<BaseWindow*> windows = utils::getWindowVector(this);
+		for (BaseWindow* window : windows) {
+			content->addWidget(window);
+			connect(window, &BaseWindow::setHeaderTitle, this, 
+    	    &BaseWidget::onSetHeaderTitle);
+			connect(window, &BaseWindow::setHeaderStyleSheet, this, 
+    	    &BaseWidget::onSetHederStyleSheet);
+			connect(window, &BaseWindow::changeRoute, this, 
+    	    &BaseWidget::onChangeRoute);
+		}
+
+		changeContent(utils::SignUp);
+
     mainLayout->addWidget(header);
     mainLayout->addWidget(content);
-
-    // signals and slots
-    qInfo() << connect(content, &BaseWindow::setHeaderTitle, this, 
-        &BaseWidget::onSetHeaderTitle);
   }
 
-  void BaseWidget::setContent(BaseWindow* content)
+  void BaseWidget::onSetHeaderTitle(const QString& text)
   {
-    this->content = content;
+    headerTitle->setText(text);
   }
+
+	void BaseWidget::onSetHederStyleSheet(const QString& styleSheet)
+	{
+		header->setStyleSheet(styleSheet);
+	}
+
+	void BaseWidget::onChangeRoute(utils::Route route)
+	{
+		changeContent(route);
+	}
+
+	void BaseWidget::changeContent(utils::Route route)
+	{
+		content->setCurrentIndex(route);
+		utils::getWindowByRoute(this, route)->after();
+	}
 }

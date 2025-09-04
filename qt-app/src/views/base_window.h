@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/router.h"
+
 #include <QWidget>
 
 namespace views
@@ -9,9 +11,14 @@ namespace views
     Q_OBJECT
   public:
     BaseWindow(QWidget* parent = nullptr);
+		virtual ~BaseWindow();
+
+		// call this after signal and slot connection
+		virtual void after() = 0;
 
   signals:
-    void setHeaderBackground();
+		void setHeaderStyleSheet(const QString& styleSheet);
     void setHeaderTitle(const QString& text);
+		void changeRoute(utils::Route route);
   };
 }
